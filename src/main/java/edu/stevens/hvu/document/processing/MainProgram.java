@@ -87,56 +87,58 @@ public class MainProgram {
 		try {
 			WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.load(doc);
 			MainDocumentPart mainDocumentPart = wordMLPackage.getMainDocumentPart();
-			String sdtNodesXPath = "//w:sdt";
 
-			List<Object> nodes = mainDocumentPart.getJAXBNodesViaXPath(sdtNodesXPath, false);
-			for (Object n : nodes) {
+			// Name
+			List<Object> nameNodes = mainDocumentPart.getJAXBNodesViaXPath("//w:sdt[w:sdtPr[w:tag[@w:val='name']]]",
+					false);
+			for (Object n : nameNodes) {
 				if (n instanceof JAXBElement && ((JAXBElement) n).getValue() instanceof SdtRun) {
 					SdtRun run = (SdtRun) ((JAXBElement) n).getValue();
-					SdtPr pr = run.getSdtPr();
+					SdtContent content = run.getSdtContent();
+					for (Object c : content.getContent()) {
+						if (c instanceof R) {
+							for (Object t : ((R) c).getContent()) {
+								if (t instanceof JAXBElement) {
+									Text name = (Text) ((JAXBElement) t).getValue();
+									name.setValue("VU HA DUNG");
 
-					// Name
-					if (pr.getTag().getVal().equals("name")) {
-						SdtContent content = run.getSdtContent();
-						for (Object c : content.getContent()) {
-							if (c instanceof R) {
-								for (Object t : ((R) c).getContent()) {
-									if (t instanceof JAXBElement) {
-										Text name = (Text) ((JAXBElement) t).getValue();
-										name.setValue("DUNG VU");
-
-									}
-								}
-							}
-						}
-					}
-
-					// Title
-					if (pr.getTag().getVal().equals("title")) {
-						SdtContent content = run.getSdtContent();
-						for (Object c : content.getContent()) {
-							if (c instanceof R) {
-								for (Object t : ((R) c).getContent()) {
-									if (t instanceof JAXBElement) {
-										Text title = (Text) ((JAXBElement) t).getValue();
-										title.setValue("Software Developer");
-
-									}
 								}
 							}
 						}
 					}
 				}
-			} // End of for loops SdtRun
+			}
 
-			List<Object> checkBoxes = mainDocumentPart.getJAXBNodesViaXPath("//w:ffData", false);
+			// Title
+			List<Object> titleNodes = mainDocumentPart.getJAXBNodesViaXPath("//w:sdt[w:sdtPr[w:tag[@w:val='title']]]",
+					false);
+			for (Object n : titleNodes) {
+				if (n instanceof JAXBElement && ((JAXBElement) n).getValue() instanceof SdtRun) {
+					SdtRun run = (SdtRun) ((JAXBElement) n).getValue();
+					SdtContent content = run.getSdtContent();
+					for (Object c : content.getContent()) {
+						if (c instanceof R) {
+							for (Object t : ((R) c).getContent()) {
+								if (t instanceof JAXBElement) {
+									Text name = (Text) ((JAXBElement) t).getValue();
+									name.setValue("Chuyen vien cao cap");
+
+								}
+							}
+						}
+					}
+				}
+			}
+
+			List<Object> checkBoxes = mainDocumentPart.getJAXBNodesViaXPath("//w:ffData[w:name[@w:val = 'Check3']]",
+					false);
 			for (Object b : checkBoxes) {
 				for (Object o : ((CTFFData) b).getNameOrEnabledOrCalcOnExit()) {
-					if (o instanceof JAXBElement && ((JAXBElement) o).getValue() instanceof CTFFName) {
-						CTFFName n = (CTFFName) ((JAXBElement) o).getValue();
-						if (n.getVal().equals("Check3")) {
-							setCheckBox(b);
-						}
+					if (o instanceof JAXBElement && ((JAXBElement) o).getValue() instanceof CTFFCheckBox) {
+						CTFFCheckBox cb = (CTFFCheckBox) ((JAXBElement) o).getValue();
+						BooleanDefaultTrue value = new BooleanDefaultTrue();
+						value.setVal(true);
+						cb.setChecked(value);
 					}
 				}
 			} // End of for loops CTFFCheckBox
@@ -172,19 +174,6 @@ public class MainProgram {
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
-		}
-	}
-
-	@SuppressWarnings("rawtypes")
-	private static void setCheckBox(Object b) {
-		for (Object o : ((CTFFData) b).getNameOrEnabledOrCalcOnExit()) {
-			if (o instanceof JAXBElement && ((JAXBElement) o).getValue() instanceof CTFFCheckBox) {
-				CTFFCheckBox cb = (CTFFCheckBox) ((JAXBElement) o).getValue();
-				BooleanDefaultTrue value = new BooleanDefaultTrue();
-				value.setVal(true);
-				cb.setChecked(value);
-
-			}
 		}
 	}
 }
