@@ -16,6 +16,7 @@ import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.docx4j.Docx4J;
+import org.docx4j.Docx4jProperties;
 import org.docx4j.openpackaging.packages.ProtectDocument;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
@@ -29,6 +30,10 @@ import org.docx4j.wml.SdtContent;
 import org.docx4j.wml.SdtPr;
 import org.docx4j.wml.SdtRun;
 import org.docx4j.wml.Text;
+
+import com.documents4j.api.DocumentType;
+import com.documents4j.api.IConverter;
+import com.documents4j.job.LocalConverter;
 
 /**
  * Hello world!
@@ -143,34 +148,37 @@ public class MainProgram {
 				}
 			} // End of for loops CTFFCheckBox
 
-			// File exportFile = new File(cwd + "\\target\\Sample output.docx");
-			// wordMLPackage.save(exportFile);
+			/*
+			 * // Other option ProtectDocument protection = new
+			 * ProtectDocument(wordMLPackage);
+			 * protection.restrictEditing(STDocProtect.READ_ONLY, "qwerty");
+			 * FileOutputStream stream = new FileOutputStream(cwd +
+			 * "\\target\\Sample output.pdf"); Docx4J.toPDF(wordMLPackage, stream);
+			 * Docx4J.save(wordMLPackage, new java.io.File(cwd +
+			 * "\\target\\Sample output.docx"), Docx4J.FLAG_SAVE_ENCRYPTED_AGILE, "1234");
+			 * 
+			 * // Protect the PDF File file = new File(cwd + "\\target\\Sample output.pdf");
+			 * PDDocument document = PDDocument.load(file); // Creating access permission
+			 * object AccessPermission ap = new AccessPermission(); // Creating
+			 * StandardProtectionPolicy object StandardProtectionPolicy spp = new
+			 * StandardProtectionPolicy("1234", "1234", ap); // Setting the length of the
+			 * encryption key spp.setEncryptionKeyLength(128); // Setting the access
+			 * permissions spp.setPermissions(ap); // Protecting the document
+			 * document.protect(spp); // Saving the document document.save(cwd +
+			 * "\\target\\Sample output.pdf"); // Closing the document document.close();
+			 */
 
-			// Other option
-			ProtectDocument protection = new ProtectDocument(wordMLPackage);
-			protection.restrictEditing(STDocProtect.READ_ONLY, "qwerty");
-			FileOutputStream stream = new FileOutputStream(cwd + "\\target\\Sample output.pdf");
-			Docx4J.toPDF(wordMLPackage, stream);
-			Docx4J.save(wordMLPackage, new java.io.File(cwd + "\\target\\Sample output.docx"),
-					Docx4J.FLAG_SAVE_ENCRYPTED_AGILE, "1234");
+			// documents4j - Require MS Office Word to be installed in the server!!!
+			File exportDocFile = new File(cwd + "\\target\\Sample output.docx");
+			wordMLPackage.save(exportDocFile);
 
-			/* Protect the PDF */
-			File file = new File(cwd + "\\target\\Sample output.pdf");
-			PDDocument document = PDDocument.load(file);
-			// Creating access permission object
-			AccessPermission ap = new AccessPermission();
-			// Creating StandardProtectionPolicy object
-			StandardProtectionPolicy spp = new StandardProtectionPolicy("1234", "1234", ap);
-			// Setting the length of the encryption key
-			spp.setEncryptionKeyLength(128);
-			// Setting the access permissions
-			spp.setPermissions(ap);
-			// Protecting the document
-			document.protect(spp);
-			// Saving the document
-			document.save(cwd + "\\target\\Sample output.pdf");
-			// Closing the document
-			document.close();
+			File exportPdfFile = new File(cwd + "\\target\\Sample output.pdf");
+
+			FileInputStream docxInputStream = new FileInputStream(exportDocFile);
+			FileOutputStream pdfOutputStream = new FileOutputStream(exportPdfFile);
+			IConverter converter = LocalConverter.builder().build();
+			converter.convert(docxInputStream).as(DocumentType.DOCX).to(pdfOutputStream).as(DocumentType.PDF).execute();
+			pdfOutputStream.close();
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
