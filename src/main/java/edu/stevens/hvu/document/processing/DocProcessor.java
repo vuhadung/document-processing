@@ -29,7 +29,7 @@ public class DocProcessor implements Runnable {
 	public DocProcessor(int id) {
 		this.id = id;
 		this.t = new Thread(this);
-		System.out.println("New thread: " + t.getName());
+		//System.out.println("New thread: " + t.getName());
 		t.start();
 	}
 
@@ -115,7 +115,9 @@ public class DocProcessor implements Runnable {
 	}
 
 	public void run() {
+		System.out.println(t.getName() + " starts");
 		this.readDocxFileUsingDocx4j(id);
+		System.out.println(t.getName() + " finishes");
 	}
 
 }

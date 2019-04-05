@@ -42,7 +42,7 @@ import com.documents4j.job.LocalConverter;
 public class MainProgram {
 	public static void main(String[] args) {
 
-		for (int i = 1; i < 10; i++) {
+		for (int i = 1; i < 3; i++) {
 			new DocProcessor(i);
 		}
 
