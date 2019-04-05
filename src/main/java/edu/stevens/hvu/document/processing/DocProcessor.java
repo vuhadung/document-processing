@@ -24,13 +24,13 @@ import com.documents4j.job.LocalConverter;
 public class DocProcessor implements Runnable {
 
 	private int id;
-	private Thread t;
+	// private Thread t;
 
 	public DocProcessor(int id) {
 		this.id = id;
-		this.t = new Thread(this);
-		//System.out.println("New thread: " + t.getName());
-		t.start();
+		// this.t = new Thread(this);
+		// System.out.println("New thread: " + t.getName());
+		// t.start();
 	}
 
 	public void readDocxFileUsingDocx4j(int i) {
@@ -115,9 +115,11 @@ public class DocProcessor implements Runnable {
 	}
 
 	public void run() {
-		System.out.println(t.getName() + " starts");
+		// System.out.println(t.getName() + " starts");
+		System.out.println(Thread.currentThread().getName() + " starts");
 		this.readDocxFileUsingDocx4j(id);
-		System.out.println(t.getName() + " finishes");
+		System.out.println(Thread.currentThread().getName() + " finishes");
+		// System.out.println(t.getName() + " finishes");
 	}
 
 }

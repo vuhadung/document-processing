@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.xml.bind.JAXBElement;
 
@@ -41,10 +43,14 @@ import com.documents4j.job.LocalConverter;
  */
 public class MainProgram {
 	public static void main(String[] args) {
+		ExecutorService exec = Executors.newFixedThreadPool(2);
 
-		for (int i = 1; i < 3; i++) {
-			new DocProcessor(i);
+		for (int i = 1; i < 6; i++) {
+			exec.submit(new DocProcessor(i));
+			//System.out.println(Thread.currentThread().getName());
+			//exec.execute(new DocProcessor(i));
 		}
+		exec.shutdown();
 
 		System.out.println("DONE");
 	}
